@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Produto</title>
+</head>
+<body>
+    <h1>Cadastrar Produto</h1>
+    <form id="produtoForm">
+        <label for="nf">Número da Nota Fiscal:</label>
+        <input type="text" id="nf" name="nf" required><br>
+
+        <label for="fornecedor">Fornecedor:</label>
+        <input type="text" id="fornecedor" name="fornecedor" required><br>
+
+        <label for="codigo">Código:</label>
+        <input type="text" id="codigo" name="codigo" required><br>
+
+        <label for="nome">Nome do Produto:</label>
+        <input type="text" id="nome" name="nome" required><br>
+
+        <label for="quantidade">Quantidade:</label>
+        <input type="number" id="quantidade" name="quantidade" required><br>
+
+        <label for="preco">Preço:</label>
+        <input type="number" id="preco" name="preco" step="0.01" required><br>
+
+        <button type="submit">Cadastrar</button>
+    </form>
+
+    <script>
+        const token = localStorage.getItem('token');
+
+        if(!token){
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById("produtoForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const nf = document.getElementById("nf").value;
+            const fornecedor = document.getElementById("fornecedor").value;
+            const codigo = document.getElementById("codigo").value;
+            const nome = document.getElementById("nome").value;
+            const quantidade = document.getElementById("quantidade").value;
+            const preco = document.getElementById("preco").value;
+
+            try {
+                const response = await fetch("http://localhost:3000/produtos", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        nf,
+                        fornecedor,
+                        codigo,
+                        nome,
+                        quantidade,
+                        preco
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(data);
+                    window.location.href = 'sucesso.html';
+                    // Redirecionar para página de sucesso ou fazer outra ação necessária
+                } else {
+                    const data = await response.json();
+                    alert(data.mensage);
+                    
+                }
+            } catch (error) {
+                console.error("Erro ao cadastrar produto:", error);
+            }
+        });
+    </script>
+</body>
+</html>

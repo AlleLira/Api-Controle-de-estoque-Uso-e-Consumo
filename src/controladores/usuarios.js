@@ -9,13 +9,13 @@ const cadastrarUsuario = async (req, res) =>{
         campo.push('nome')
     }
     if(!email){
-        campo.push(email)
+        campo.push('email')
     }
     if(!nomeusuario){
-        campo.push(nomeUsuario)
+        campo.push('nomeusuario')
     }
     if(!senha){
-        campo.push(senha)
+        campo.push('senha')
     }
     if(campo.length > 0 ) {
         return res.status(400).json({mensage: `O campo ${campo} é obrigatório.`})

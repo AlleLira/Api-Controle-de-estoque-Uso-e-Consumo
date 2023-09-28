@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Você está logado</title>
+    </head>
+    <body>
+        <nav>
+            <ul class = "menu">
+                
+                <li><a href="sucesso.html">Home</a></li>
+                <li><a href="cadastrarnf.html">Cadatrar NF</a></li>
+
+
+            </ul>
+        </nav>
+        <script>
+            // Recupere o token do localStorage
+            const token = localStorage.getItem('token');
+    
+            // Verifique se o token foi recuperado com sucesso
+            if (token) {
+                console.log('Token JWT recuperado:', token);
+    
+                // Agora você pode usar o token em suas solicitações à API ou para outras finalidades
+            } else {
+                console.log('Token JWT não encontrado no localStorage. O usuário não está autenticado.');
+                // Lidar com o caso em que o usuário não está autenticado
+            }
+        </script>
+    </body>
+    </html>
