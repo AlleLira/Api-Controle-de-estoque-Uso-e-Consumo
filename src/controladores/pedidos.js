@@ -53,8 +53,56 @@ const gerarPedido = async (req, res) => {
     }
 }
 
+const buscarPedidos = async(req, res) =>{
+    try{
+        const {loja} = req.query;
+
+        const pedidosLoja = await knex('pedido')
+        .select('id','data_pedido')
+        .where('loja', loja);
+
+        for(const pedido of pedidosLoja) {
+            const produtosPedido = await knex('produtos_pedido')
+                .select('quantidade', 'preco')
+                .where('pedido_id', pedido.id);
+
+                let valorTotalPedido = 0;
+                produtosPedido.forEach((produto) =>{
+                    valorTotalPedido += produto.quantidade * produto.preco;
+                });
+                
+                pedido.valorTotal = valorTotalPedido
+        }
+
+        return res.status(200).json(pedidosLoja);
+    } catch(error){
+        res.status(500).json({ error: 'Erro ao buscar pedidos na loja.'});
+    }
+};
+
+const detalharPedido = async (req,res) =>{
+    try{
+
+        const { pedidoId } = req.query;
+
+        const produtosPedido = await knex('produtos_pedido')
+            .select('codigo', 'nome', 'quantidade', 'preco')
+            .where('pedido_id', pedidoId);
+
+        let valorTotalPedido = 0;
+        produtosPedido.forEach((produto) =>{
+            produto.valortotal = produto.quantidade * produto.preco;
+            valorTotalPedido += produto.valorTotal;
+        })
+
+    } catch(error){
+        res.status(500).json({ error: 'Erro ao buscar detalhes do pedido'});
+    }
+}
 
 
 module.exports = {
-    gerarPedido
+    gerarPedido,
+    buscarPedidos,
+    detalharPedido
 }

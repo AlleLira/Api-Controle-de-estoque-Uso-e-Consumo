@@ -3,7 +3,7 @@ const {cadastrarUsuario} = require('./controladores/usuarios');
 const login = require('./controladores/login');
 const verificarLogin = require('./filtros/verificarLogin');
 const { cadastrarProduto, estoque, buscarnf } = require('./controladores/produtos');
-const { gerarPedido } = require('./controladores/pedidos');
+const { gerarPedido, detalharPedido, buscarPedidos } = require('./controladores/pedidos');
 const rotas = express();
 
 //cadastro de usuário
@@ -18,6 +18,9 @@ rotas.post('/produtos', cadastrarProduto);
 rotas.get('/estoque', estoque);
 rotas.get('/notafiscal', buscarnf);
 rotas.post('/pedidos', gerarPedido);
+rotas.get('/buscarpedido', buscarPedidos);
+rotas.get('/detalharpedido', detalharPedido);
+
 
 
 

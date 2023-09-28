@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Pedidos</title>
+</head>
+<body>
+    <h1>Gerenciamento de Pedidos</h1>
+    
+    <!-- Botão para buscar pedidos -->
+    <button onclick="buscarPedidos()">Buscar Pedidos</button>
+    
+    <!-- Botão para detalhar um pedido -->
+    <button onclick="detalharPedido()">Detalhar Pedido</button>
+
+    <div id="resultado"></div> <!-- Aqui você pode mostrar o resultado da função -->
+
+    <script>
+        async function buscarPedidos() {
+            try {
+                const loja = 'sua_loja'; // Defina a loja desejada aqui
+
+                // Faça uma solicitação para o servidor para buscar pedidos
+                const response = await fetch(`http://localhost:3000/buscarpedido?loja=${loja}`);
+                const data = await response.json();
+
+                // Exiba o resultado na página
+                document.getElementById('resultado').innerHTML = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Erro ao buscar pedidos na loja:', error);
+            }
+        }
+
+        async function detalharPedido() {
+            try {
+                const pedidoId = 'id_do_pedido'; // Substitua pelo ID do pedido desejado
+
+                // Faça uma solicitação para o servidor para detalhar um pedido
+                const response = await fetch(`http://localhost:3000/detalharpedido?pedidoId=${pedidoId}`);
+                const data = await response.json();
+
+                // Exiba o resultado na página
+                document.getElementById('resultado').innerHTML = JSON.stringify(data, null, 2);
+            } catch (error) {
+                console.error('Erro ao buscar detalhes do pedido:', error);
+            }
+        }
+    </script>
+</body>
+</html>
