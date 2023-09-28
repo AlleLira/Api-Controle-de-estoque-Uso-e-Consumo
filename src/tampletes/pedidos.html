@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fazer Pedido</title>
+</head>
+<body>
+    <h1>Fazer Pedido</h1>
+    <form id="pedidoForm">
+        <label for="loja">Loja:</label>
+        <input type="text" id="loja" name="loja" required>
+        <br>
+
+        <h2>Produtos:</h2>
+        <div id="produtos">
+            <div class="produto">
+                <label for="codigo">Código do Produto:</label>
+                <input type="text" class="codigo" name="codigo[]" required>
+                <label for="quantidade">Quantidade:</label>
+                <input type="number" class="quantidade" name="quantidade[]" required>
+            </div>
+        </div>
+        <button type="button" id="addProduto">Adicionar Produto</button>
+        <br><br>
+        <button type="submit">Enviar Pedido</button>
+    </form>
+
+    <script>
+        const token = localStorage.getItem('token');
+
+        if(!token){
+        window.location.href = 'index.html';
+        }
+        
+        document.getElementById("addProduto").addEventListener("click", function () {
+            const produtosDiv = document.getElementById("produtos");
+            const produtoDiv = document.createElement("div");
+            produtoDiv.className = "produto";
+            produtoDiv.innerHTML = `
+                <label for="codigo">Código do Produto:</label>
+                <input type="text" class="codigo" name="codigo[]" required>
+                <label for="quantidade">Quantidade:</label>
+                <input type="number" class="quantidade" name="quantidade[]" required>
+                <br>
+            `;
+            produtosDiv.appendChild(produtoDiv);
+        });
+
+        document.getElementById("pedidoForm").addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const loja = document.getElementById("loja").value;
+            const codigoInputs = document.querySelectorAll(".codigo");
+            const quantidadeInputs = document.querySelectorAll(".quantidade");
+            const produtos = [];
+
+            for (let i = 0; i < codigoInputs.length; i++) {
+                const codigo = codigoInputs[i].value;
+                const quantidade = quantidadeInputs[i].value;
+                produtos.push({ codigo, quantidade });
+            }
+
+            const requestBody = { loja, produtos };
+
+            try {
+                const response = await fetch('http://localhost:3000/pedidos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(requestBody)
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    alert(data.mensagem);
+                } else {
+                    const errorData = await response.json();
+                    alert(errorData.mensagem);
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Ocorreu um erro ao enviar o pedido.');
+            }
+        });
+    </script>
+</body>
+</html>
