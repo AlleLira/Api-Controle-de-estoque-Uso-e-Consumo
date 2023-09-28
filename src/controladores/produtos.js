@@ -62,6 +62,44 @@ const cadastrarProduto = async (req, res) =>{
     }
 };
 
+const estoque = async (req, res) => {
+    try{
+    const {nome} = req.query;
+
+    let consulta = knex('estoque').select('*');
+
+    if(nome){
+        consulta = consulta.where('nome', 'like', `%${nome}%`);
+    }
+
+    const registro = await consulta;
+    
+    res.status(200).json(registro);
+
+    } catch(error){
+        res.status(500).json({ error: 'Erro ao consultar o estoque.'})
+    }
+}
+
+const buscarnf = async (req, res) => {
+    try {
+        const { nfEspecifica } = req.query;
+
+        let consulta = knex('produtos')
+            .select('nf', 'codigo','fornecedor', 'nome', 'quantidade', 'preco')
+            .where('nf', nfEspecifica);
+
+        const produtosDaNF = await consulta;
+
+        return res.status(200).json(produtosDaNF);
+    } catch (error) {
+        res.status(500).json({ error: 'Erro ao buscar NF.' });
+    }
+};
+
+
 module.exports = {
-    cadastrarProduto
+    cadastrarProduto,
+    estoque,
+    buscarnf
 }

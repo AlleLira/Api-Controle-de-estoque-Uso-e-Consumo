@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta Nota Fical</title>
+</head>
+<body>
+    <h1>Consulta Nota Fical</h1>
+
+    <!-- Formulário para consulta de estoque por nome -->
+    <form id="consultaForm">
+        <label for="nf">Número da NF:</label>
+        <input type="text" id="nf" name="nf" placeholder="Digite o número da Nota Fiscal">
+        <button type="submit">Consultar</button>
+    </form>
+
+    <!-- Resultados da consulta serão exibidos aqui -->
+    <div id="resultado"></div>
+
+    <script>
+        // Verifique se há um token no localStorage
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+            window.location.href = 'index.html'; // Redirecionar para a página de login se não houver token
+        }
+
+        // Manipulação do formulário
+        document.getElementById("consultaForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const nf = document.getElementById("nf").value;
+
+            try {
+                // Adicione o token ao cabeçalho da solicitação
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+
+                const response = await fetch(`http://localhost:3000/notafiscal?nfEspecifica=${encodeURIComponent(nf)}`, {
+                    headers: headers
+                });
+
+                const data = await response.json();
+
+                // Limpe o conteúdo anterior
+                document.getElementById("resultado").innerHTML = "";
+
+                // Exiba os resultados da consulta
+                if (data.length === 0) {
+                    document.getElementById("resultado").innerHTML = "Nenhuma nota fiscal encontrada.";
+                } else {
+                    const listaNF = document.createElement("ul");
+
+                    data.forEach((produto) => {
+                        const nfEncontrada = document.createElement("li");
+                        nfEncontrada.textContent = `NF: ${produto.nf}, Fornecedor: ${produto.fornecedor}, Codigo: ${produto.codigo} Nome: ${produto.nome}, Quantidade: ${produto.quantidade},  Preço: ${produto.preco}`;
+                        listaNF.appendChild(nfEncontrada);
+                    });
+
+                    document.getElementById("resultado").appendChild(listaNF);
+                }
+            } catch (error) {
+                console.error("Erro ao consultar Nota Fiscal:", error);
+            }
+        });
+    </script>
+</body>
+</html>

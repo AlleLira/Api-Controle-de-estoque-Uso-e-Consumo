@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta de Estoque</title>
+</head>
+<body>
+    <h1>Consulta de Estoque</h1>
+
+    <!-- Formulário para consulta de estoque por nome -->
+    <form id="consultaForm">
+        <label for="nome">Nome do Produto:</label>
+        <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto">
+        <button type="submit">Consultar</button>
+    </form>
+
+    <!-- Resultados da consulta serão exibidos aqui -->
+    <div id="resultado"></div>
+
+    <script>
+        // Verifique se há um token no localStorage
+        const token = localStorage.getItem('token');
+        
+        if (!token) {
+            window.location.href = 'index.html'; // Redirecionar para a página de login se não houver token
+        }
+
+        // Manipulação do formulário
+        document.getElementById("consultaForm").addEventListener("submit", async function(event) {
+            event.preventDefault();
+
+            const nome = document.getElementById("nome").value;
+
+            try {
+                // Adicione o token ao cabeçalho da solicitação
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+
+                const response = await fetch(`http://localhost:3000/estoque?nome=${encodeURIComponent(nome)}`, {
+                    headers: headers
+                });
+
+                const data = await response.json();
+
+                // Limpe o conteúdo anterior
+                document.getElementById("resultado").innerHTML = "";
+
+                // Exiba os resultados da consulta
+                if (data.length === 0) {
+                    document.getElementById("resultado").innerHTML = "Nenhum produto encontrado.";
+                } else {
+                    const listaProdutos = document.createElement("ul");
+
+                    data.forEach((produto) => {
+                        const itemProduto = document.createElement("li");
+                        itemProduto.textContent = `Nome: ${produto.nome}, Quantidade: ${produto.quantidade},  Preço: ${produto.preco}`;
+                        listaProdutos.appendChild(itemProduto);
+                    });
+
+                    document.getElementById("resultado").appendChild(listaProdutos);
+                }
+            } catch (error) {
+                console.error("Erro ao consultar o estoque:", error);
+            }
+        });
+    </script>
+</body>
+</html>
