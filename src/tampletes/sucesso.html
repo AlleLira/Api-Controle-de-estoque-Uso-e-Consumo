@@ -14,22 +14,23 @@
                 <li><a href="estoque.html">Estoque</a></li>
                 <li><a href="consultanf.html">Consulta NF</a></li>
                 <li><a href="pedidos.html">Pedidos</a></li>
+                <li><a href="detalhepedido.html">Detalhar Pedidos</a></li>
 
 
             </ul>
         </nav>
         <script>
-            // Recupere o token do localStorage
+          
             const token = localStorage.getItem('token');
     
-            // Verifique se o token foi recuperado com sucesso
+            
             if (token) {
                 console.log('Token JWT recuperado:', token);
     
-                // Agora você pode usar o token em suas solicitações à API ou para outras finalidades
+                
             } else {
                 console.log('Token JWT não encontrado no localStorage. O usuário não está autenticado.');
-                // Lidar com o caso em que o usuário não está autenticado
+               
             }
         </script>
     </body>

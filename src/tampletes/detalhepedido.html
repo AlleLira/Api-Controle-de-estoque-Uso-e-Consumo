@@ -8,25 +8,72 @@
 <body>
     <h1>Gerenciamento de Pedidos</h1>
     
-    <!-- Botão para buscar pedidos -->
-    <button onclick="buscarPedidos()">Buscar Pedidos</button>
+   
+    <form id="formBuscarPedidos">
+        <label for="loja">Nome da Loja:</label>
+        <input type="text" id="loja" name="loja">
+        <button type="button" onclick="buscarPedidos()">Buscar Pedidos</button>
+    </form>
     
-    <!-- Botão para detalhar um pedido -->
-    <button onclick="detalharPedido()">Detalhar Pedido</button>
+    
+    <form id="formDetalharPedido">
+        <label for="pedidoId">Número do Pedido:</label>
+        <input type="text" id="pedidoId" name="pedidoId">
+        <button type="button" onclick="detalharPedido()">Detalhar Pedido</button>
+    </form>
 
-    <div id="resultado"></div> <!-- Aqui você pode mostrar o resultado da função -->
+    <div id="resultado"></div> 
 
     <script>
+
+        const token = localStorage.getItem('token');
+ 
+            if (!token) {
+                 window.location.href = 'index.html';
+            }
+
         async function buscarPedidos() {
             try {
-                const loja = 'sua_loja'; // Defina a loja desejada aqui
 
-                // Faça uma solicitação para o servidor para buscar pedidos
-                const response = await fetch(`http://localhost:3000/buscarpedido?loja=${loja}`);
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+
+                const loja = document.getElementById('loja').value;
+
+              
+                const response = await fetch(`http://localhost:3000/buscarpedido?loja=${loja}`,{
+                    headers: headers
+                });
+
                 const data = await response.json();
 
-                // Exiba o resultado na página
-                document.getElementById('resultado').innerHTML = JSON.stringify(data, null, 2);
+                
+                document.getElementById("resultado").innerHTML = "";
+
+               
+                if (data.length === 0) {
+                    document.getElementById("resultado").innerHTML = "Nenhum pedido encontrado para a loja.";
+                } else {
+                    const listaPedido = document.createElement("ul");
+
+                    data.forEach((pedido) => {
+                        const pedidoLoja = document.createElement("li");
+
+                        const dataFormatada = new Date(pedido.data_pedido).toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        });
+
+                        pedidoLoja.textContent = `Número Pedido: ${pedido.id}, Data: ${dataFormatada}, Valor Total: ${pedido.valorTotal}`;
+                        listaPedido.appendChild(pedidoLoja);
+                    });
+
+                    document.getElementById("resultado").appendChild(listaPedido);
+                }                
+                
             } catch (error) {
                 console.error('Erro ao buscar pedidos na loja:', error);
             }
@@ -34,14 +81,41 @@
 
         async function detalharPedido() {
             try {
-                const pedidoId = 'id_do_pedido'; // Substitua pelo ID do pedido desejado
 
-                // Faça uma solicitação para o servidor para detalhar um pedido
-                const response = await fetch(`http://localhost:3000/detalharpedido?pedidoId=${pedidoId}`);
+                const headers = {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                };
+
+                const pedidoId = document.getElementById('pedidoId').value;
+
+               
+                const response = await fetch(`http://localhost:3000/detalharpedido?pedidoId=${pedidoId}`,{
+                    headers: headers
+                });
                 const data = await response.json();
 
-                // Exiba o resultado na página
-                document.getElementById('resultado').innerHTML = JSON.stringify(data, null, 2);
+                document.getElementById("resultado").innerHTML = "";
+
+
+                if (data.length === 0) {
+                    document.getElementById("resultado").innerHTML = "Nenhum pedido encontrado para a loja.";
+                } else {
+                const listaPedido = document.createElement("ul");
+
+                data.forEach((pedido) => {
+
+                const pedidoLoja = document.createElement("li");
+                                                                                                   
+                pedidoLoja.textContent = `Código: ${pedido.codigo}, Nome: ${pedido.nome}, Quantidade: ${pedido.quantidade}, Valor Uni.: ${pedido.preco}, Total: ${pedido.valortotal}`;
+    
+
+                listaPedido.appendChild(pedidoLoja);
+                });
+
+                document.getElementById("resultado").appendChild(listaPedido);
+                 }                            
+
             } catch (error) {
                 console.error('Erro ao buscar detalhes do pedido:', error);
             }
